@@ -16,7 +16,7 @@ testDB = async () => {
 dropTables = async () => {
   try {
     await client.query(`
-    
+      DROP TABLE IF EXISTS users;
     `);
   } catch (error) {
     throw error;
