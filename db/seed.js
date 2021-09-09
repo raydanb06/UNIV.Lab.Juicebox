@@ -23,4 +23,14 @@ dropTables = async () => {
   }
 }
 
+createTables = async () => {
+  try {
+    await client.query(`
+
+  `);
+  } catch (error) {
+    throw error;
+  }
+}
+
 testDB();
