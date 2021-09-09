@@ -26,5 +26,6 @@ createUser = async ({ username, password} ) => {
 
 module.exports = {
   client,
-  getAllUsers
+  getAllUsers,
+  createUser
 }
