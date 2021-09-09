@@ -11,6 +11,18 @@ getAllUsers= async () => {
   return rows;
 }
 
+createUser = async ({ username, password} ) => {
+  try {
+    const result = await client.query(`
+    
+    `);
+
+    return result;
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   client,
   getAllUsers
