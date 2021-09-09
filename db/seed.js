@@ -1,7 +1,8 @@
 const { 
   client, 
   getAllUsers,
-  createUser
+  createUser,
+  updateUser
 } = require('./index');
 
 const dropTables = async () => {
@@ -72,15 +73,21 @@ const testDB = async () => {
   try {
     console.log('Starting to test database...');
 
+    console.log('Calling getAllusers...');
     const users = await getAllUsers();
-    console.log('getAllUsers: ', users)
+    console.log('getAllUsers: ', users);
+
+    console.log('Calling updateUser on users[0]...');
+    const updateUserResult = await updateUser(users[0].id, {
+      name: 'Newname Sogood',
+      location: 'Lesterville, KY'
+    });
+    console.log('updateUser: ', updateUserResult);
 
     console.log('Finished database tests!');
   } catch (error) {
     console.error('Error testing database!')
     console.error(error);
-  } finally {
-    client.end();
   }
 }
 
