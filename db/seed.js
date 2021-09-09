@@ -33,4 +33,17 @@ createTables = async () => {
   }
 }
 
+rebuildDB = async () => {
+  try {
+    client.connect();
+
+    await dropTables();
+    await createTables();
+  } catch (error) {
+    console.error(error);
+  } finally {
+    client.end();
+  }
+}
+
 testDB();
