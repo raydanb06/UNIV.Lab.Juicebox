@@ -4,7 +4,7 @@ const {
   createUser
 } = require('./index');
 
-dropTables = async () => {
+const dropTables = async () => {
   try {
     console.log('Starting to drop tables...')
 
@@ -19,7 +19,7 @@ dropTables = async () => {
   }
 }
 
-createTables = async () => {
+const createTables = async () => {
   try {
     console.log('Starting to build tables...');
 
@@ -27,7 +27,10 @@ createTables = async () => {
       CREATE TABLE users (
         id SERIAL PRIMARY KEY,
         username varchar(255) UNIQUE NOT NULL,
-        password varchar(255) NOT NULL
+        password varchar(255) NOT NULL,
+        name varchar(255) NOT NULL,
+        location varchar(255) NOT NULL,
+        active BOOLEAN DEFAULT true
       );
     `);
 
@@ -38,13 +41,13 @@ createTables = async () => {
   }
 }
 
-createInitialUsers = async () => {
+const createInitialUsers = async () => {
   try {
     console.log('Starting to create users...');
 
-    const albert = await createUser({ username: 'albert', password: 'bertie99'});
-    const sandra = await createUser({ username: 'sandra', password: '2sandy4me'});
-    const glamgal = await createUser({ username: 'glamgal', password: 'soglam'});
+    const albert = await createUser({ username: 'albert', password: 'bertie99', name: 'Al Bert', location: 'AZ'});
+    const sandra = await createUser({ username: 'sandra', password: '2sandy4me', name: 'San Dra', location: 'CA'});
+    const glamgal = await createUser({ username: 'glamgal', password: 'soglam', name: 'Glam Gal', location: 'HI'});
 
     console.log('Finished creating users!');
   } catch (error) {
@@ -53,7 +56,7 @@ createInitialUsers = async () => {
   }
 }
 
-rebuildDB = async () => {
+const rebuildDB = async () => {
   try {
     client.connect();
 
@@ -65,7 +68,7 @@ rebuildDB = async () => {
   } 
 }
 
-testDB = async () => {
+const testDB = async () => {
   try {
     console.log('Starting to test database...');
 
