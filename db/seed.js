@@ -2,7 +2,12 @@ const {
   client, 
   getAllUsers,
   createUser,
-  updateUser
+  updateUser,
+  createPost,
+  updatePost,
+  getAllPosts,
+  getPostsByUser,
+  getUserById
 } = require('./index');
 
 const dropTables = async () => {
@@ -68,6 +73,23 @@ const createInitialUsers = async () => {
   }
 }
 
+const createInitialPosts = async () => {
+  try {
+    console.log('Starting to create posts...');
+    const [albert, sandra, glamgal] = await getAllUsers();
+
+    await createPost({
+      authorId: albert.id,
+      title: "First Post",
+      content: "This is my first post. I hope I love writing blogs as much as I love writing them."
+    });
+
+    // a couple more
+  } catch (error) {
+    throw error;
+  }
+}
+
 const rebuildDB = async () => {
   try {
     client.connect();
@@ -75,6 +97,7 @@ const rebuildDB = async () => {
     await dropTables();
     await createTables();
     await createInitialUsers();
+    await createInitialPosts();
   } catch (error) {
     throw error;
   } 
