@@ -80,11 +80,22 @@ const createInitialPosts = async () => {
 
     await createPost({
       authorId: albert.id,
-      title: "First Post",
+      title: "First Post - Albert",
       content: "This is my first post. I hope I love writing blogs as much as I love writing them."
     });
 
-    // a couple more
+    await createPost({
+      authorId: sandra.id,
+      title: "First Post - Sandra",
+      content: "First post. Many more to come."
+    });
+
+    await createPost({
+      authorId: glamgal.id,
+      title: "First Post - Glamgal",
+      content: "My first post and can't wait to update you all about myself."
+    });
+
   } catch (error) {
     throw error;
   }
@@ -117,6 +128,21 @@ const testDB = async () => {
       location: 'Lesterville, KY'
     });
     console.log('updateUser: ', updateUserResult);
+
+    console.log("Calling getAllPosts");
+    const posts = await getAllPosts();
+    console.log("Result:", posts);
+
+    console.log("Calling updatePost on posts[0]");
+    const updatePostResult = await updatePost(posts[0].id, {
+      title: "New Title",
+      content: "Updated Content"
+    });
+    console.log("Result:", updatePostResult);
+
+    console.log("Calling getUserById with 1");
+    const albert = await getUserById(1);
+    console.log("Result:", albert);
 
     console.log('Finished database tests!');
   } catch (error) {

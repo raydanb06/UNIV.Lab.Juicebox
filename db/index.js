@@ -72,7 +72,7 @@ const updatePost = async (id, { title, content, active }) => {
   try {
     const { rows: [ post ] } = await client.query(`
       UPDATE posts
-      SET "title": $1, "content": $2, "active": $3
+      SET "title" = $1, "content" = $2, "active" = $3
       WHERE id = $4
       RETURNING *;
     `, [ title, content, active, id ]);
@@ -86,7 +86,7 @@ const updatePost = async (id, { title, content, active }) => {
 const getAllPosts = async () => {
   try {
     const { rows } = await client.query(
-      `SELECT id, authorId, title, content, active
+      `SELECT id, "authorId", title, content, active
       FROM posts;
     `);
 
