@@ -175,6 +175,20 @@ const createPostTag = async (postId, tagId) => {
   }
 }
 
+const addTagToPost = async (postId, tagList) => {
+  try {
+    const createPostTagPromises = tagList.map(
+      tag => createPostTag(postId, tag.id)
+    );
+
+    await Promise.all(createPostTagPromises);
+
+    return await getPostsById(postId);
+  } catch (error) {
+    throw error;
+  }
+}
+
 module.exports = {
   client,
   getAllUsers,
