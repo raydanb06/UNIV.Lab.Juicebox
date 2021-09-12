@@ -69,24 +69,43 @@ const createPost = async ({ authorId, title, content, tags = [] }) => {
   }
 };
 
-const updatePost = async (id, fields = {}) => {
+const updatePost = async (postId, fields = {}) => {
+  const { tags } = fields;
+  delete fields.tags;
+  
   const setString = Object.keys(fields).map(
     (key, index) => `"${ key }"=$${ index + 1 }`
   ).join(', ');
 
-  if (setString.length === 0) {
-    return;
-  }
-  
   try {
-    const { rows: [ post ] } = await client.query(`
-      UPDATE posts
-      SET ${ setString }
-      WHERE id = ${ id }
-      RETURNING *;
+    if (setString.length > 0) {
+      await client.query(`
+        UPDATE posts
+        SET ${ setString }
+        WHERE id = ${ postId }
+        RETURNING *;
     `, Object.values(fields));
+    }
 
-    return post;
+    if (tags === undefined) {
+      return await getPostById(postId)
+    }
+
+    const tagList = await createTags(tags);
+    const tagListIdString = tagList.map(
+      tag => `${ tag.id }`
+    ).join(', ');
+
+    await client.query(`
+      DELETE FROM post_tags
+      WHERE "tagId"
+      NOT IN (${ tagListIdString})
+      AND "postId" = $1;
+    `, [postId]);
+
+    await addTagsToPost(postId, tagList);
+
+    return await getPostById(postId);
   } catch (error) {
     throw error;
   }
@@ -141,9 +160,7 @@ const getUserById = async (userId) => {
   }
 };
 
-const createTags = async (tagList) => {
-  console.log('createTags function...');
-  
+const createTags = async (tagList) => {  
   if (tagList.length === 0) {
     return;
   };
@@ -151,12 +168,10 @@ const createTags = async (tagList) => {
   const insertValues = tagList.map(
     (_, index) => `$${ index + 1}`)
     .join('), (');
-  console.log('insertValues:', insertValues)
 
   const selectValues = tagList.map(
     (_, index) => `$${ index + 1}`)
     .join(', ');
-  console.log('selectValues:', selectValues)
 
   try {
     console.log('Inserting tags...')
@@ -165,17 +180,13 @@ const createTags = async (tagList) => {
       VALUES (${ insertValues })
       ON CONFLICT (name) DO NOTHING;
     `, Object.values(tagList));
-    console.log('Made it through insertValues...')
 
-    console.log('Selecting tags...')
-    console.log(Object.values(tagList))
     const { rows } = await client.query(`
       SELECT * FROM tags
       WHERE name
       IN (${ selectValues });
     `, Object.values(tagList));
 
-    console.log('End createTags function...')
     return rows;
   } catch (error) {
     console.error(error);
