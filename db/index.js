@@ -151,7 +151,7 @@ const createTags = async (tagList) => {
       ON CONFLICT (name) DO NOTHING;
     `, [ tagList ]);
 
-    const { row: [tag] } = await client.query(`
+    const { row: [ tag ] } = await client.query(`
       SELECT * FROM tags
       WHERE name
       IN ${ selectValues }
@@ -161,7 +161,19 @@ const createTags = async (tagList) => {
   } catch (error) {
     console.error(error);
   }
-} 
+}
+
+const createPostTag = async (postId, tagId) => {
+  try {
+    await client.query(`
+      INSERT INTO post_tags("postId", "tagId")
+      VALUES ($1, $2)
+      ON CONFLICT ("postId", "tagId") DO NOTHING;
+    `, [ postId, tagId ]);
+  } catch (error) {
+    console.error(error);
+  }
+}
 
 module.exports = {
   client,
