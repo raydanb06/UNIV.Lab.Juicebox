@@ -10,8 +10,8 @@ const {
   getUserById,
   createTags,
   createPostTag,
-  addTagToPost,
-  getPostsById
+  addTagsToPost,
+  getPostById
 } = require('./index');
 
 const dropTables = async () => {
@@ -153,6 +153,7 @@ const rebuildDB = async () => {
     await createTables();
     await createInitialUsers();
     await createInitialPosts();
+    await createInitialTags();
   } catch (error) {
     throw error;
   } 
