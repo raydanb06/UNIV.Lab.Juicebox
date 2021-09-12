@@ -13,7 +13,7 @@ const getAllUsers = async () => {
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 const createUser = async ({ username, password, name, location }) => {
   try {
@@ -28,7 +28,7 @@ const createUser = async ({ username, password, name, location }) => {
   } catch (error) {
     throw error;
   }
-}
+};
 
 const updateUser = async (id, fields = {}) => {
   const setString = Object.keys(fields).map(
@@ -51,7 +51,7 @@ const updateUser = async (id, fields = {}) => {
   } catch (error) {
     throw error;
   }
-}
+};
 
 const createPost = async ({ authorId, title, content }) => {
   try {
@@ -66,7 +66,7 @@ const createPost = async ({ authorId, title, content }) => {
   } catch (error) {
     throw error;
   }
-}
+};
 
 const updatePost = async (id, { title, content, active }) => {
   try {
@@ -81,7 +81,7 @@ const updatePost = async (id, { title, content, active }) => {
   } catch (error) {
     throw error;
   }
-}
+};
 
 const getAllPosts = async () => {
   try {
@@ -94,7 +94,7 @@ const getAllPosts = async () => {
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 const getPostsByUser = async (userId) => {
   try {
@@ -107,7 +107,7 @@ const getPostsByUser = async (userId) => {
   } catch (error) {
     console.error(error);
   }
-}
+};
 
 const getUserById = async (userId) => {
   try {
@@ -121,7 +121,39 @@ const getUserById = async (userId) => {
   } catch (error) {
     console.error(error);
   }
-}
+};
+
+const createTags = async (tagList) => {
+  if (tagList.length === 0) {
+    return;
+  };
+
+  const insertValues = tagList.map(
+    (_, index) => `$${ index + 1}`)
+    .join(', ');
+
+  const selectValues = tagList.map(
+    (_, index) => `$${ index + 1}`)
+    .join(', ');
+
+  try {
+    const { row: tags } = await client.query(`
+      INSERT INTO tags(name)
+      VALUES ${ insertValues }
+      ON CONFLICT (name) DO NOTHING;
+    `, [ tagList ]);
+
+    const { row: [tag] } = await client.query(`
+      SELECT * FROM tags
+      WHERE name
+      IN ${ selectValues }
+    `, [ tagList ]);
+
+    return tag;
+  } catch (error) {
+    console.error(error);
+  }
+} 
 
 module.exports = {
   client,

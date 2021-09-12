@@ -15,7 +15,9 @@ const dropTables = async () => {
     console.log('Starting to drop tables...')
 
     await client.query(`
-    DROP TABLE IF EXISTS posts;  
+    DROP TABLE IF EXISTS post_tags;  
+    DROP TABLE IF EXISTS tags;  
+    DROP TABLE IF EXISTS posts;
     DROP TABLE IF EXISTS users;
     `);
 
@@ -50,6 +52,21 @@ const createTables = async () => {
         active BOOLEAN DEFAULT true
       );
     `);
+
+    await client.query(`
+    CREATE TABLE tags (
+      id SERIAL PRIMARY KEY,
+      name VARCHAR(255) UNIQUE NOT NULL
+    );
+  `);
+
+  await client.query(`
+  CREATE TABLE post_tags (
+    "postId" INTEGER REFERENCES posts(id),
+    "tagId" INTEGER REFERENCES tags(id),
+    UNIQUE("postId", "tagId")
+  );
+`);
 
     console.log('Finished buliding tables!');
   } catch (error) {
@@ -136,7 +153,8 @@ const testDB = async () => {
     console.log("Calling updatePost on posts[0]");
     const updatePostResult = await updatePost(posts[0].id, {
       title: "New Title",
-      content: "Updated Content"
+      content: "Updated Content",
+      active: "true"
     });
     console.log("Result:", updatePostResult);
 
