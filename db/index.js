@@ -93,12 +93,16 @@ const updatePost = async (id, fields = {}) => {
 
 const getAllPosts = async () => {
   try {
-    const { rows } = await client.query(
-      `SELECT id, "authorId", title, content, active
+    const { rows: postIds } = await client.query(`
+      SELECT id
       FROM posts;
     `);
 
-    return rows;
+    const posts = await Promise.all(postIds.map(
+      post => getPostById( post.id )
+    ));
+
+    return posts;
   } catch (error) {
     console.error(error);
   }
@@ -106,12 +110,17 @@ const getAllPosts = async () => {
 
 const getPostsByUser = async (userId) => {
   try {
-    const { rows } = await client.query(`
-    SELECT * FROM posts
+    const { rows: postIds } = await client.query(`
+    SELECT id
+    FROM posts
     WHERE "authorId" = $1
     `, [userId]);
 
-    return rows;
+    const posts = await Promise.all(postIds.map(
+      post => getPostById( post.id )
+    ));
+
+    return posts;
   } catch (error) {
     console.error(error);
   }
@@ -224,18 +233,6 @@ const getPostById = async (postId) => {
     delete post.authorId;
 
     return post;
-  } catch (error) {
-    throw error;
-  }
-}
-
-const getPostsByUser = async (userId) => {
-  try {
-    const { rows: postIds } = await client.query(`
-      SELECT id
-      FROM posts
-      WHERE "authorId"=$1;
-    `, [userId]);
   } catch (error) {
     throw error;
   }
