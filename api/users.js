@@ -3,13 +3,13 @@ const usersRouter = express.Router();
 
 const { getAllUsers } = require('../db');
 
-// /api/users
 usersRouter.use((req, res, next) => {
   console.log("A request is being made to /users");
 
   next();
 });
 
+// /api/users
 usersRouter.get('/', async (req, res) => {
   const users = await getAllUsers();
   
