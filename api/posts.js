@@ -14,6 +14,15 @@ postsRouter.use((req, res, next) => {
   next();
 });
 
+// /api/posts
+postsRouter.get('/', async (req, res) => {
+  const posts = await getAllPosts();
+  
+  res.send({
+    posts
+  });
+});
+
 postsRouter.post('/', requireUser, async (req, res, next) => {
   const { title, content, tags = "" } = req.body;
 
@@ -40,15 +49,6 @@ postsRouter.post('/', requireUser, async (req, res, next) => {
   } catch ({ name, message }) {
     next({ name, message });
   }
-});
-
-// /api/posts
-postsRouter.get('/', async (req, res) => {
-  const posts = await getAllPosts();
-  
-  res.send({
-    posts
-  });
 });
 
 postsRouter.patch('/:postId', requireUser, async (req, res, next) => {
